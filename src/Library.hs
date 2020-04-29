@@ -29,13 +29,13 @@ gimnastaDePrueba' = Gimnasta 30 75 3
 
 esObeso :: Gimnasta -> Bool
 esObeso gimnasta = peso gimnasta > 100
-
 esObeso' = (> 100).peso
-
 esObeso'' (Gimnasta _ peso _) = peso > 100
 
+estaTonificado :: Gimnasta -> Bool
 estaTonificado = (>5).tonificacion
 
+estaSaludable :: Gimnasta -> Bool
 estaSaludable gimnasta = not (esObeso gimnasta) && estaTonificado gimnasta
 estaSaludable' gimnasta = (not.esObeso) gimnasta && estaTonificado gimnasta
 
