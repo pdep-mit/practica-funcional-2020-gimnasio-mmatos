@@ -43,7 +43,63 @@ estaSaludable' gimnasta = (not.esObeso) gimnasta && estaTonificado gimnasta
 -- Punto 2: Quemar calorías
 ---------------------------
 
+quemarCalorias :: Int -> Gimnasta -> Gimnasta
+quemarCalorias calorias gimnasta
+  | esObeso gimnasta = bajarKilos (calorias `div` 150) gimnasta
+  | (not.esObeso) gimnasta && edad gimnasta > 30 && calorias > 200 = bajarKilos 1 gimnasta
+  | otherwise = bajarKilos (calorias `div` (peso gimnasta * edad gimnasta)) gimnasta
+
+bajarKilos :: Int -> Gimnasta -> Gimnasta
+bajarKilos kilosABajar gimnasta = Gimnasta {
+  tonificacion = tonificacion gimnasta,
+  edad = edad gimnasta,
+  peso = peso gimnasta - kilosABajar
+  }
+
+bajarKilos' kilosABajar (Gimnasta edadInicial pesoInicial tonificacionInicial)
+  = Gimnasta edadInicial (pesoInicial-kilosABajar) tonificacionInicial
+
+bajarKilos'' :: Int -> Gimnasta -> Gimnasta
+bajarKilos'' kilosABajar gimnastaOriginal
+  = gimnastaOriginal {peso = peso gimnastaOriginal - kilosABajar}
 
 ---------------------------
 -- Punto 3: Ejercicios
 ---------------------------
+-- type Ejercicio = Int -> Gimnasta -> Gimnasta
+
+type Kilos = Int
+pesas :: Kilos -> Ejercicio
+pesas kilos minutos gimnasta
+  | minutos > 10 = tonificar (kilos `div` 10) gimnasta
+  | otherwise = gimnasta
+
+tonificar :: Int -> Gimnasta -> Gimnasta
+tonificar tonificacionGanada gimnastaOriginal
+  = gimnastaOriginal {tonificacion = tonificacion gimnastaOriginal + tonificacionGanada}
+
+----------
+type Inclinacion = Int
+colina :: Inclinacion -> Ejercicio
+colina inclinacion minutos = quemarCalorias (2*minutos*inclinacion)
+
+montania :: Inclinacion -> Ejercicio
+montania inclinacionInicial minutosTotales
+  = tonificar 1
+      . colina (inclinacionInicial + 3) (minutosTotales `div` 2)
+      . colina inclinacionInicial (minutosTotales `div` 2)
+
+-----------
+
+ejercicioEnCinta :: Int -> Ejercicio
+ejercicioEnCinta velocidadPromedio minutos = quemarCalorias (velocidadPromedio*minutos)
+
+caminata :: Ejercicio
+caminata = ejercicioEnCinta 5
+
+entrenamientoEnCinta :: Ejercicio
+entrenamientoEnCinta minutos gimnasta = ejercicioEnCinta velociadPromedio minutos gimnasta
+  where
+    velocidadInicial = 6
+    velocidadFinal = velocidadInicial + minutos `div` 5
+    velociadPromedio = (velocidadInicial + velocidadFinal) `div` 2
